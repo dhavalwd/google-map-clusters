@@ -1,0 +1,19 @@
+{
+  "name": "google-map-clusters",
+  "version": "1.0.0",
+  "description": "An example of Google map API to show different clusters example.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhavalwd/google-map-clusters.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dhavalwd/google-map-clusters/issues"
+  },
+  "homepage": "https://github.com/dhavalwd/google-map-clusters#readme"
+}
