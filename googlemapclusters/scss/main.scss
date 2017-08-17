@@ -24,8 +24,10 @@
     overflow: scroll;
 
     #markerlist div.active {
-        padding: 40px;
-        border: 1px solid #000;
+        a {
+            color: #fff !important;
+            font-size: 20px;
+        }
     }
 
     #markerlist div.visible {

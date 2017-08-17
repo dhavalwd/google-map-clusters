@@ -26,21 +26,17 @@ function initMap() {
 
     
     showmarkers();
-    // console.log(markers);
 
     var tmpMarkers = [];
 
     google.maps.event.addListener(map, 'idle', function(event) 
     {
-        
-        // console.log(markers.length);
         for (var i = 0; i < markers.length; i++) 
         {
             // console.log(map.getBounds());
             if (map.getBounds().contains(markers[i].getPosition())) 
             {
                 // markers[i] in visible bounds
-                
                 console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
                 $("#markerlist div").hide();
                 $("#markerlist").find("div#"+markers[i].get('id')).addClass("visible").css("display","block");
@@ -49,8 +45,6 @@ function initMap() {
             else 
             {
                 // markers[i] is not in visible bounds
-                // console.log("not visible");
-                // return false;
                 $("#markerlist").find("div#"+markers[i].get('id')).removeClass("visible").css("display","none");
             }
         }
@@ -119,8 +113,8 @@ function markerclick(item, latlng, marker) {
     var fileurl = item.photo_file_url;
     var div = panel.find('div');
 
-    $("#markerlist div").removeClass("active");
-    $("#markerlist").find("div#"+item.photo_id).addClass("active");
+    $("#markerlist div").removeClass("active button");
+    $("#markerlist").find("div#"+item.photo_id).addClass("active button");
 
     var infoHtml = '<div class="info"><h3>' + title +
     '</h3><div class="info-body">' +
