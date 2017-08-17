@@ -37,7 +37,7 @@ function initMap() {
             if (map.getBounds().contains(markers[i].getPosition())) 
             {
                 // markers[i] in visible bounds
-                console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
+                // console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
                 $("#markerlist div").hide();
                 $("#markerlist").find("div#"+markers[i].get('id')).addClass("visible").css("display","block");
                 // console.log(markers.length);
@@ -49,7 +49,7 @@ function initMap() {
             }
         }
 
-        console.log("map zoomed in or zoomed out or moved or changed");
+        // console.log("map zoomed in or zoomed out or moved or changed");
     });
 }
 
