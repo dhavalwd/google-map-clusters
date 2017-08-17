@@ -1,10 +1,19 @@
 #map {
-    width: 100%;
+    width: 75%;
     height: 600px;
+    float: left;
+}
+
+.heading {
+    float: left;
+    width: 100%;
 }
 
 .allmarkers {
     float: left;
-    width: 100%;
-    margin-top: 30px;
+    width: 20%;
+    padding: 0 20px 20px 20px;
+    margin-right: 5%;
+    max-height: 600px;
+    overflow: scroll;
 }
