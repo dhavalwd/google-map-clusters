@@ -1,6 +1,12 @@
+.grid-container {
+    float: left;
+    width: 100%;
+    max-width: 100%;
+}
+
 #map {
     width: 75%;
-    height: 600px;
+    height: 800px;
     float: left;
 }
 
@@ -21,4 +27,9 @@
         padding: 40px;
         border: 1px solid #000;
     }
+
+    #markerlist div.visible {
+        display: block !important;
+    }
+
 }

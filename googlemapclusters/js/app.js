@@ -3,6 +3,7 @@ $(document).foundation();
 
 var map;
 var infoWindow;
+var markers = [];
 
 var items = data.photos;
 var panel = $("#markerlist");
@@ -16,18 +17,49 @@ function initMap() {
 
     var latlng = new google.maps.LatLng(39.91, 116.38);
     var options = {
-        'zoom': 2,
+        'zoom': 3,
         'center': latlng,
         'mapTypeId': google.maps.MapTypeId.ROADMAP
     };
 
     map = new google.maps.Map(document.getElementById('map'), options);
 
+    
     showmarkers();
+    // console.log(markers);
+
+    var tmpMarkers = [];
+
+    google.maps.event.addListener(map, 'idle', function(event) 
+    {
+        
+        // console.log(markers.length);
+        for (var i = 0; i < markers.length; i++) 
+        {
+            // console.log(map.getBounds());
+            if (map.getBounds().contains(markers[i].getPosition())) 
+            {
+                // markers[i] in visible bounds
+                
+                console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
+                $("#markerlist div").hide();
+                $("#markerlist").find("div#"+markers[i].get('id')).addClass("visible").css("display","block");
+                // console.log(markers.length);
+            } 
+            else 
+            {
+                // markers[i] is not in visible bounds
+                // console.log("not visible");
+                // return false;
+                $("#markerlist").find("div#"+markers[i].get('id')).removeClass("visible").css("display","none");
+            }
+        }
+
+        console.log("map zoomed in or zoomed out or moved or changed");
+    });
 }
 
 function showmarkers() {
-    
 
     // Create an array of alphabetical characters used to label the markers.
     // var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -36,12 +68,14 @@ function showmarkers() {
     // Note: The code uses the JavaScript Array.prototype.map() method to
     // create an array of markers based on a given "locations" array.
     // The map() method here has nothing to do with the Google Maps API.
-    var markers = items.map(function(item, i) {
+    markers = items.map(function(item, i) {
         var mylatlng = {lat: item.latitude, lng: item.longitude};
         // console.log(mylatlng);
         var marker = new google.maps.Marker({
             position: mylatlng
         });
+
+        marker.set("id", item.photo_id);
         
         marker.addListener('click', function() {
             markerclick(item, mylatlng, marker);
@@ -86,7 +120,7 @@ function markerclick(item, latlng, marker) {
     var div = panel.find('div');
 
     $("#markerlist div").removeClass("active");
-    $("#markerlist").find("div#"+item.photo_id).addClass("active");    
+    $("#markerlist").find("div#"+item.photo_id).addClass("active");
 
     var infoHtml = '<div class="info"><h3>' + title +
     '</h3><div class="info-body">' +
