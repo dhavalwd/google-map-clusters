@@ -16,4 +16,9 @@
     margin-right: 5%;
     max-height: 600px;
     overflow: scroll;
+
+    #markerlist div.active {
+        padding: 40px;
+        border: 1px solid #000;
+    }
 }

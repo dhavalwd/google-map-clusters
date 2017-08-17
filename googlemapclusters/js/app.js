@@ -58,20 +58,18 @@ function showmarkers() {
         {
             titleText = 'No title';
         }
-        panel.append("<div><a id='item-"+i+"' href='#' class="+title.className+">"+titleText+"</a></div>");
+        panel.append("<div id='"+item.photo_id+"'><a id='item-"+i+"' href='#' class="+title.className+">"+titleText+"</a></div>");
         // locations[i] = {lat: items[i].latitude, lng: items[i].longitude};
 
-        document.getElementById("item-"+i).addEventListener("click", function(){
-            markerclick(item, mylatlng, marker);
-        });
-
-        // title.addEventListener('click', function(){
-        //     console.log("hello");
+        // document.getElementById("item-"+i).addEventListener("click", function(){
         //     markerclick(item, mylatlng, marker);
         // });
+
+        document.getElementById("item-"+i).addEventListener("mouseover", function(){
+            markerclick(item, mylatlng, marker);
+        });
         
         i++;
-        // console.log(i);
 
         return marker;
     });
@@ -82,10 +80,49 @@ function showmarkers() {
 }
 
 function markerclick(item, latlng, marker) {
-    
+
     var title = item.photo_title;
     var url = item.photo_url;
     var fileurl = item.photo_file_url;
+    var div = panel.find('div');
+
+    // for (var key in div) {
+    //     if (div.hasOwnProperty(key)) {
+    //         console.log(key + " -> " + div[key].id);
+    //     }
+    // }
+    $("#markerlist div").removeClass("active");
+    $("#markerlist").find("div#"+item.photo_id).addClass("active");
+
+    // Object.keys(div).forEach(function(key) {
+    //     // console.log(key, div[key].id);
+
+    //     if(item.photo_id == div[key].id)
+    //     {
+            
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // });
+
+    // for(var d=0; d<=div.length; d++)
+    // {
+    //     // console.log(d);
+    //     var tmp = div[d].id;
+    //     console.log("Photo id: "+item.photo_id+"<br/>tmp: "+tmp);
+    //     // return false;
+    //     // if(item.photo_id == tmp)
+    //     // {
+    //     //     console.log("matches");
+    //     // }
+    //     // else{
+    //     //     console.log("no match");
+    //     // }
+    // }
+    
+    
 
     var infoHtml = '<div class="info"><h3>' + title +
     '</h3><div class="info-body">' +
@@ -99,5 +136,8 @@ function markerclick(item, latlng, marker) {
     infoWindow.setContent(infoHtml);
     infoWindow.setPosition(latlng);
     infoWindow.open(map, marker);
+    // console.log(div.length);
+    // console.log(item.photo_id);
+    
     
 }
