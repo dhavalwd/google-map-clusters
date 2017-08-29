@@ -21,10 +21,19 @@
                 <div class="filter_province large-2 medium-6 small-12 columns">
                     <select>
                         <option value="">Location</option>
-                        <option value="ab">Alberta</option>
-                        <option value="ns">Nova Scotia</option>
-                        <option value="qc">Quebec</option>
-                        <option value="on">Ontario</option>
+                        <option value="Alberta">Alberta</option>
+                        <option value="British Columbia">British Columbia</option>
+                        <option value="Manitoba">Manitoba</option>
+                        <option value="New Brunswick">New Brunswick</option>
+                        <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                        <option value="Nova Scotia">Nova Scotia</option>
+                        <option value="Northwest Territories">Northwest Territories</option>
+                        <option value="Nunavut">Nunavut</option>
+                        <option value="Ontario">Ontario</option>
+                        <option value="Prince Edward Island">Prince Edward Island</option>
+                        <option value="Quebec">Quebec</option>
+                        <option value="Saskatchewan">Saskatchewan</option>
+                        <option value="Yukon">Yukon</option>
                     </select>
                 </div>
                 <div class="filter_type large-2 medium-6 small-12 columns">
@@ -47,10 +56,13 @@
             </div>
           </div>
           <div class="map_container section--full-height row">
-            <div id="map" class="large-12 columns"></div>
-            <div id="properties_container" class="properties_container large-2 columns">
+            <div id="map" class="small-12 medium-8 large-12 columns"></div>
+            <div id="properties_container" class="properties_container small-12 medium-4 large-12 columns">
               <div class="properties_data">
-                <div class="heading"></div>
+                <div class="head_container">
+                  <div class="heading"></div>
+                  <div class="redosearch visible text-right"><a href="javascript: void(0)" class="button">Refresh list</a></div>
+                </div>
                 <div class="allmarkers">
                     <div id="markerlist">
                     </div>

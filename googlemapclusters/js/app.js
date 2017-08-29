@@ -24,13 +24,42 @@ function set_full_height(section) {
     jQuery(section).height(full_height);
 }
 
+// Scroll to function without animation
+jQuery.fn.scrollTo = function(elem) { 
+    $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top); 
+    return this; 
+};
+
+// Function add padding to map bounds
+function paddedBounds(npad, spad, epad, wpad) {
+    var SW = map.getBounds().getSouthWest();
+    var NE = map.getBounds().getNorthEast();
+    var topRight = map.getProjection().fromLatLngToPoint(NE);
+    var bottomLeft = map.getProjection().fromLatLngToPoint(SW);
+    var scale = Math.pow(2, map.getZoom());
+
+    var SWtopoint = map.getProjection().fromLatLngToPoint(SW);
+    var SWpoint = new google.maps.Point(((SWtopoint.x - bottomLeft.x) * scale) + wpad, ((SWtopoint.y - topRight.y) * scale) - spad);
+    var SWworld = new google.maps.Point(SWpoint.x / scale + bottomLeft.x, SWpoint.y / scale + topRight.y);
+    var pt1 = map.getProjection().fromPointToLatLng(SWworld);
+
+    var NEtopoint = map.getProjection().fromLatLngToPoint(NE);
+    var NEpoint = new google.maps.Point(((NEtopoint.x - bottomLeft.x) * scale) - epad, ((NEtopoint.y - topRight.y) * scale) + npad);
+    var NEworld = new google.maps.Point(NEpoint.x / scale + bottomLeft.x, NEpoint.y / scale + topRight.y);
+    var pt2 = map.getProjection().fromPointToLatLng(NEworld);
+
+    return new google.maps.LatLngBounds(pt1, pt2);
+}
+
+
+// All Functionality starts from here.
 var map;
 var infoWindow;
 var markers = [];
 var items = [];
 var data = "";
 
-
+// Created promise to get the data from API
 var promise = $.getJSON('http://dev-crombie.pantheonsite.io/properties/search');
 
 promise.done(function(datatest) {
@@ -51,6 +80,7 @@ panel.innerHTML = '';
 var item = document.createElement('DIV');
 var title = document.createElement('A');
 
+// Initialize map
 function initMap() {
     // console.log(datanew);
     // var latlng = new google.maps.LatLng(39.91, 116.38);
@@ -72,31 +102,47 @@ function initMap() {
 
     // Bounds changed event on map
     google.maps.event.addListener(map, 'bounds_changed', function (event) {
+        console.log("bounds changed");
         prop_container.find('.properties_data').removeClass("active");
         prop_container.find(".loading_list").addClass("active");
     });
 
-    var bounds = new google.maps.LatLngBounds();
+    // var bounds = new google.maps.LatLngBounds();
+    
     var position = '';
     // Idle event on map
     google.maps.event.addListener(map, 'idle', function (event) {
+        var bounds = paddedBounds(120, 120, 50, 50); // paddedBounds(north,south,east,west);
+        clearMarkers();
+        var tmpPadMarkers = [];
+        // console.info("Normal");
+        // console.log(bounds);
+        // console.info("With padding");
+        // console.log(bounds_padd);
+        // console.info("Map.getBounds");
+        // console.log(map.getBounds());
+        
         console.log("Idle event");
         k = 0;
         for (var i = 0; i < markers.length; i++) {
             // console.log(map.getBounds());
-            if (map.getBounds().contains(markers[i].getPosition())) {
+            if (bounds.contains(markers[i].getPosition())) {
                 // markers[i] in visible bounds
                 // console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
-                position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
+                // position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
+                tmpPadMarkers.push(markers[i]);
+                markers[i].setVisible(true);
                 $("#markerlist > div").hide();
                 $("#markerlist").find("div#" + markers[i].get('id')).addClass("visible").css("display", "block");
                 // console.log(markers.length);
                 k++;
             } else {
                 // markers[i] is not in visible bounds
+                markers[i].setVisible(false);
                 $("#markerlist").find("div#" + markers[i].get('id')).removeClass("visible").css("display", "none");
             }
         }
+        markercluster(map, tmpPadMarkers);
         setTimeout(function () {
             if (k != markers.length) {
                 // Not seeing all Markers so side panel comes out
@@ -110,6 +156,7 @@ function initMap() {
                 prop_container.removeClass("active").find('.properties_data').removeClass("active");
                 prop_container.find(".loading_list").removeClass("active");
             }
+            // prop_container.find(".redosearch").addClass("visible");
             // maphtml.css("width","75%");
             prop_container.find(".heading").html("<p>" + k + " PROPERTIES</p>");
         }, 300);
@@ -148,7 +195,7 @@ function showmarkers() {
         if (titleText === '') {
             titleText = 'No title';
         }
-        panel.append("<div id='" + item.property_id + "' class='marker_item'><div class='marker_image'><img src='" + item.image + "' alt='' /></div><div class='marker_details'><span class='marker_title'><a id='item-" + i + "' href='#' class=" + title.className + ">" + titleText + "</a></span><span class='marker_address'>" + item.city + ", "+item.province+"</span></div>");
+        panel.append("<div id='" + item.property_id + "' class='marker_item' data-href='"+item.url+"'><div class='marker_image'><img src='" + item.image + "' alt='' /></div><div class='marker_details'><span class='marker_title'><a id='item-" + i + "' href='#' class=" + title.className + ">" + titleText + "</a></span><span class='marker_address'>" + item.city + ", "+item.province+"</span></div>");
 
         // document.getElementById("item-"+i).addEventListener("click", function(){
         //     markerclick(item, mylatlng, marker);
@@ -190,13 +237,16 @@ function markerclick(item, latlng, marker) {
 
     $("#markerlist div").removeClass("active");
     $("#markerlist").find("div#" + item.property_id).addClass("active");
+    $(".allmarkers").scrollTo("#"+item.property_id, 400);
 
-    var infoHtml = '<div class="info"><div class="info-body">' + '<img src="' + fileurl + '" class="info-img"/></div><div class="info_title"><h3>' + title + '</h3></div>' + '<div class="info_address"><span>' + item.city + ', '+item.province+'</span></div></div></div>';
+    var infoHtml = '<div class="info"><style>.info-body {background-image: url("http://localhost/google-map-clusters/googlemapclusters/images/turtle.jpg")}</style><div class="info-body">' + '<img src="http://localhost/google-map-clusters/googlemapclusters/images/turtle.jpg" class="info-img"/></div><div class="info_title"><h3>' + title + '</h3></div>' + '<div class="info_address"><span>' + item.address+'</span></div></div></div>';
     infoWindow.setContent(infoHtml);
     infoWindow.setPosition(latlng);
     // infoWindow.setOptions({disableAutoPan: true});
     infoWindow.open(map, marker);
 }
+
+// Everthing about filter starts from here.
 
 function multiFilter(array, filters) {
   const filterKeys = Object.keys(filters);
@@ -263,4 +313,10 @@ $(document).ready(function () {
         var cursize = $(this).find(".filter_size select option:selected").attr('value');
         filterMarkers(curprovince, curtype, cursize);
     });
+    
+    setTimeout(function(){
+        $(".marker_item").on("click", function(){
+            window.location.href = $(this).attr('data-href');
+        });
+    }, 600);
 });

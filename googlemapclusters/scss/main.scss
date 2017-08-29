@@ -3,6 +3,10 @@ Custom Variables for Properties page
 ***********************************/
 $border-gray: #ececec;
 
+/*********************************
+Custom Variables ends here.
+*********************************/
+
 
 
 .grid-container {
@@ -19,6 +23,7 @@ $border-gray: #ececec;
 
 #map {
     height: 100%;
+    width: 75%;
     float: left;
     transition: all 0.3s ease-in;
 }
@@ -29,6 +34,8 @@ $border-gray: #ececec;
     position: relative;
     display: none;
     padding: 0;
+    width: 25%;
+    overflow: scroll;
 
     &.active {
         display: block;
@@ -49,15 +56,43 @@ $border-gray: #ececec;
     }
 }
 
-.heading {
+.head_container {
     float: left;
     width: 100%;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
 
-    p{
-        text-transform: uppercase;
-        font-size: 1.5rem;
-        color: $navy;
-        font-family: $body-font-family-bold;
+    .heading {
+        float: left;
+        width: 70%;
+
+        p{
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            color: $navy;
+            font-family: $body-font-family-bold;
+            margin: 0;
+            padding-top: 5px;
+        }
+    }
+
+    .redosearch {
+        float: left;
+        width: 30%;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-in;
+
+        a {
+            margin: 0;
+        }
+
+        &.visible {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 }
 
@@ -130,11 +165,24 @@ $border-gray: #ececec;
 .info {
     float: left;
     width: 100%;
+    max-width: 250px;
 
     .info-body {
         float: left;
         width: 100%;
-        max-width: 200px;
+        max-width: 250px;
+        padding: 20px 0;
+        height: 120px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-bottom: 10px;
+
+        img {
+            width: 100%;
+            height: auto;
+            display: none;
+        }
     }
 
     .info_title {
@@ -144,9 +192,20 @@ $border-gray: #ececec;
         h3 {
             color: $navy;
             text-transform: uppercase;
-            padding-bottom: 3px;
-            border-bottom: 1px solid $navy;
+            margin-bottom: 0;
+            line-height: 1.8rem;
             font-size: 1.4rem;
+            font-family: $body-font-family-bold;
+        }
+    }
+
+    .info_address {
+        float: left;
+        width: 100%;
+
+        span {
+            color: $dark-gray;
+            font-size: 1rem;
         }
     }
 }
