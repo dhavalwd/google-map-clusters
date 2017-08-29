@@ -4,6 +4,9 @@
 @import 'foundation';
 @import 'motion-ui';
 
+$flex: false;
+@include foundation-everything($flex);
+
 
 @include foundation-global-styles;
 //@include foundation-grid;

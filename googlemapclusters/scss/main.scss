@@ -1,39 +1,250 @@
+/***********************************
+Custom Variables for Properties page
+***********************************/
+$border-gray: #ececec;
+
+
+
 .grid-container {
     float: left;
     width: 100%;
     max-width: 100%;
 }
 
-#map {
-    width: 75%;
-    height: 800px;
+.map_container {
+    max-width: 100%;
     float: left;
+    width: 100%;
+}
+
+#map {
+    height: 100%;
+    float: left;
+    transition: all 0.3s ease-in;
+}
+
+.properties_container {
+    float: left;
+    height: 100%;
+    position: relative;
+    display: none;
+    padding: 0;
+
+    &.active {
+        display: block;
+    }
+}
+
+.properties_data {
+    float: left;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in;
+    width: 100%;
+
+    &.active {
+        visibility: visible;
+        opacity: 1;
+    }
 }
 
 .heading {
     float: left;
-    width: 20%;
-    padding-left: 20px;
-    font-size: 20px;
+    width: 100%;
+
+    p{
+        text-transform: uppercase;
+        font-size: 1.5rem;
+        color: $navy;
+        font-family: $body-font-family-bold;
+    }
 }
 
 .allmarkers {
     float: left;
-    width: 20%;
-    padding: 0 20px 20px 20px;
-    margin-right: 5%;
-    max-height: 600px;
+    width: 100%;
+    max-height: 100%;
     overflow: scroll;
 
-    #markerlist div.active {
-        a {
-            color: #fff !important;
-            font-size: 20px;
+    #markerlist {
+
+        & > div.marker_item {
+            float: left;
+            width: calc(100% - 80px);
+            border: 1px solid $border-gray;
+            padding: 20px;
+            position: relative;
+            transform: scale(1);
+            margin: 10px 40px;
+
+            .marker_image {
+                float: left;
+                width: 20%;
+
+                img {
+                    display: block;
+                    width: 100%;
+                    height: auto;
+                    max-width: 100%;
+                }
+            }
+
+            .marker_details {
+                float: left;
+                width: 80%;
+                padding-left: 20px;
+
+                .marker_title {
+                    display: block;
+                    padding-bottom: 10px;
+                    
+                    a {
+                        color: $navy;
+                        text-transform: uppercase;
+                        padding-bottom: 3px;
+                        border-bottom: 1px solid $blue;
+                        display: block;
+                    }
+                }
+
+                .marker_address {
+                    color: $dark-gray;
+                }
+            }
+        }
+
+        & > div.visible {
+            display: block !important;
+        }
+
+        & > div.active {
+            transform: scale(1.1);
+            z-index: 2;
+            box-shadow: 0 0 1em 1px #ccc;
         }
     }
 
-    #markerlist div.visible {
-        display: block !important;
+}
+
+.info {
+    float: left;
+    width: 100%;
+
+    .info-body {
+        float: left;
+        width: 100%;
+        max-width: 200px;
     }
 
+    .info_title {
+        float: left;
+        width: 100%;
+
+        h3 {
+            color: $navy;
+            text-transform: uppercase;
+            padding-bottom: 3px;
+            border-bottom: 1px solid $navy;
+            font-size: 1.4rem;
+        }
+    }
+}
+
+
+.filter {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: #256492;
+    max-width: 100%;
+}
+
+.loading_list {
+    visibility: hidden;
+    opacity: 0;
+    float: left;
+    width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    transition: all 0.3s ease-in;
+
+    &.active {
+        visibility: visible;
+        opacity: 1;
+        display: block;
+    }
+}
+
+.spinner {
+  width: 80px;
+  height: 80px;
+
+  position: relative;
+  margin: 100px auto;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: $navy;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+
+.filter {
+    padding: 40px;
+    float: left;
+    width: 100%;
+
+    .filter_container {
+        padding: 0;
+
+        & > div {
+            
+            select {
+                background-color: transparent;
+                background-image: url('../images/arrow-down.png');
+                background-size: 22px 12px;
+                border: 1px solid $blue;
+                color: $white;
+                cursor: pointer;
+            }
+
+            input {
+                background-color: transparent;
+                border: 1px solid $blue;
+                color: $white;
+            }
+            
+        }
+    }
 }

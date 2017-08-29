@@ -6,36 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foundation for Sites</title>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="../css/app.css">
   </head>
   <body>
-    <div class="grid-container">
-      <div class="grid-x grid-padding-x">
-        <div class="large-12 cell">
-          <h1>Google Map Cluster Example</h1>
-        </div>
-      </div>
-
-      <div class="grid-x grid-padding-x">
-        <div class="large-12 cell">
-          <div id="map"></div>
-          <div class="heading"><strong>Marker List</strong></div>
-          <div class="allmarkers">
-              
-              <div id="markerlist">
-
+    <div class="grid-container full">
+      <article id="node-">
+        <div class="node-property">
+          <div class="filter row">
+            <div class="filter_container large-12 medium-12 small-12 columns">
+                <div class="filter_location large-6 medium-6 small-12 columns">
+                    <input type="text" placeholder="Find your space today">
+                </div>
+                <div class="filter_province large-2 medium-6 small-12 columns">
+                    <select>
+                        <option value="">Location</option>
+                        <option value="ab">Alberta</option>
+                        <option value="ns">Nova Scotia</option>
+                        <option value="qc">Quebec</option>
+                        <option value="on">Ontario</option>
+                    </select>
+                </div>
+                <div class="filter_type large-2 medium-6 small-12 columns">
+                    <select>
+                        <option value="">Type</option>
+                        <option value="freestanding">Retail - Freestanding</option>
+                        <option value="enclosed">Retail - Enclosed</option>
+                        <option value="plazas">Retail - Plazas</option>
+                        <option value="office">Office</option>
+                    </select>
+                </div>
+                <div class="filter_size large-2 medium-6 small-12 columns">
+                    <select>
+                        <option value="">Size</option>
+                        <option value="large">Large</option>
+                        <option value="medium">Medium</option>
+                        <option value="small">Small</option>
+                    </select>
+                </div>
+            </div>
+          </div>
+          <div class="map_container section--full-height row">
+            <div id="map" class="large-12 columns"></div>
+            <div id="properties_container" class="properties_container large-2 columns">
+              <div class="properties_data">
+                <div class="heading"></div>
+                <div class="allmarkers">
+                    <div id="markerlist">
+                    </div>
+                </div>
               </div>
+              <div class="loading_list">
+                <div class="spinner">
+                  <div class="double-bounce1"></div>
+                  <div class="double-bounce2"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
 
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/what-input/dist/what-input.js"></script>
     <script src="../bower_components/foundation-sites/dist/js/foundation.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuO2ABqI1946pORvrBmpMHEXamSiRQ7M&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuO2ABqI1946pORvrBmpMHEXamSiRQ7M"></script>
+    <!-- <script src="../etc/search.json"></script> -->
     <script src="../etc/data.json"></script>
-    <script src="../js/markerclusterer.js"></script>
+    <script src="../js/markerclustererplus.js"></script>
     <script src="../js/app.js"></script>
     <!-- <script>
       google.maps.event.addDomListener(window, 'load', gmap.init);

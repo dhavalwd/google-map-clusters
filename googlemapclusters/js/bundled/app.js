@@ -1,12 +1,13 @@
+'use strict';
+
 $(document).foundation();
 
 // To achieve full height section
 function set_full_height(section) {
     var window_width = jQuery(window).width();
     var window_height = jQuery(window).height();
-    var filter_height = jQuery(".filter").height();
 
-    var full_height = window_height - 155; // remove header height
+    var full_height = window_height - $(".filter").height(); // remove header height
 
     var minimum_height = 480;
 
@@ -28,20 +29,39 @@ var map;
 var infoWindow;
 var markers = [];
 var items = [];
-var data = "";
 
+// $.getJSON("../etc/search.json", function(json) {
+//     var data = JSON.parse(json);
+//     console.log(data);
+// });
 
-var promise = $.getJSON('http://dev-crombie.pantheonsite.io/properties/search');
+function loadJSON(callback) {
 
-promise.done(function(datatest) {
-//   datanew = JSON.parse(data);
-//   datanew = datatest;
-  items = datatest;
-  console.log(items);
-  initMap();
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', 'http://dev-crombie.pantheonsite.io/properties/search', true); // Replace 'my_data' with the path to your file
+    xobj.onreadystatechange = function () {
+        if (xobj.readyState == 4 && xobj.status == "200") {
+            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+            callback(xobj.responseText);
+        }
+    };
+    xobj.send(null);
+}
+
+loadJSON(function (response) {
+    // Parse JSON string into object
+    var datanew = JSON.parse(response);
+    console.log(datanew);
+    return false;
 });
+// var items = data;
+// console.log(items);
 
-
+var items = data.photos;
+// console.log(datanew);
+// console.log(typeof(datanew));
+// console.log(typeof(items));
 var panel = $("#markerlist");
 var maphtml = $("#map");
 var prop_container = $("#properties_container");
@@ -52,12 +72,12 @@ var item = document.createElement('DIV');
 var title = document.createElement('A');
 
 function initMap() {
-    // console.log(datanew);
-    // var latlng = new google.maps.LatLng(39.91, 116.38);
-    var latlng = new google.maps.LatLng(58.186561, -101.439330); // More related to Canada on Map
+
+    var latlng = new google.maps.LatLng(39.91, 116.38);
+    // var latlng = new google.maps.LatLng(60.770290, -105.125272);
     var options = {
-        // 'zoom': 2,
-        'zoom': 4,
+        'zoom': 2,
+        // 'zoom': 5,
         'center': latlng,
         'mapTypeId': google.maps.MapTypeId.ROADMAP
     };
@@ -127,19 +147,19 @@ function showmarkers() {
     // create an array of markers based on a given "locations" array.
     // The map() method here has nothing to do with the Google Maps API.
     markers = items.map(function (item, i) {
-        var mylatlng = { lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) };
+        var mylatlng = { lat: item.latitude, lng: item.longitude };
         // console.log(mylatlng);
         var marker = new google.maps.Marker({
             position: mylatlng
         });
 
-        marker.set("id", item.property_id);
+        marker.set("id", item.photo_id);
 
         marker.addListener('click', function () {
             markerclick(item, mylatlng, marker);
         });
 
-        titleText = item.property_name;
+        titleText = item.photo_title;
 
         title.href = '#';
         title.className = 'title';
@@ -148,7 +168,7 @@ function showmarkers() {
         if (titleText === '') {
             titleText = 'No title';
         }
-        panel.append("<div id='" + item.property_id + "' class='marker_item'><div class='marker_image'><img src='" + item.image + "' alt='' /></div><div class='marker_details'><span class='marker_title'><a id='item-" + i + "' href='#' class=" + title.className + ">" + titleText + "</a></span><span class='marker_address'>" + item.city + ", "+item.province+"</span></div>");
+        panel.append("<div id='" + item.photo_id + "' class='marker_item'><div class='marker_image'><img src='" + item.photo_file_url + "' alt='' /></div><div class='marker_details'><span class='marker_title'><a id='item-" + i + "' href='#' class=" + title.className + ">" + titleText + "</a></span><span class='marker_address'>" + item.owner_name + "</span></div>");
 
         // document.getElementById("item-"+i).addEventListener("click", function(){
         //     markerclick(item, mylatlng, marker);
@@ -183,15 +203,15 @@ function markercluster(map, markers) {
 
 function markerclick(item, latlng, marker) {
 
-    var title = item.property_name;
-    var url = item.image;
-    var fileurl = item.image;
+    var title = item.photo_title;
+    var url = item.photo_url;
+    var fileurl = item.photo_file_url;
     var div = panel.find('div');
 
     $("#markerlist div").removeClass("active");
-    $("#markerlist").find("div#" + item.property_id).addClass("active");
+    $("#markerlist").find("div#" + item.photo_id).addClass("active");
 
-    var infoHtml = '<div class="info"><div class="info-body">' + '<img src="' + fileurl + '" class="info-img"/></div><div class="info_title"><h3>' + title + '</h3></div>' + '<div class="info_address"><span>' + item.city + ', '+item.province+'</span></div></div></div>';
+    var infoHtml = '<div class="info"><div class="info-body">' + '<img src="' + fileurl + '" class="info-img"/></div><div class="info_title"><h3>' + title + '</h3></div>' + '<div class="info_address"><span>' + item.owner_name + '</span></div></div></div>';
     infoWindow.setContent(infoHtml);
     infoWindow.setPosition(latlng);
     // infoWindow.setOptions({disableAutoPan: true});
@@ -199,33 +219,31 @@ function markerclick(item, latlng, marker) {
 }
 
 function multiFilter(array, filters) {
-  const filterKeys = Object.keys(filters);
-  
-  // filters all elements passing the criteria
-  return array.filter((item) => {
-    // dynamically validate all filter criteria
-    return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
-  });
-}
+    var filterKeys = Object.keys(filters);
 
+    // filters all elements passing the criteria
+    return array.filter(function (item) {
+        // dynamically validate all filter criteria
+        return filterKeys.every(function (key) {
+            return !!~filters[key].indexOf(item[key]);
+        });
+    });
+}
 
 function filterMarkers(province, type, cursize) {
     clearMarkers();
     var tmpMarkers = [];
     var tmpItems = [];
-    
-    let filters = {};
-    if(province.length != 0)
-    {
+
+    var filters = {};
+    if (province.length != 0) {
         filters.province = [province];
     }
-    if(type.length != 0)
-    {
-        filters.type = [type];   
+    if (type.length != 0) {
+        filters.type = [type];
     }
 
-    if(cursize.length != 0)
-    {
+    if (cursize.length != 0) {
         filters.size = cursize;
     }
 
@@ -238,13 +256,12 @@ function filterMarkers(province, type, cursize) {
         tmp.push(item);
 
         var filtered = multiFilter(tmp, filters);
-        if(filtered.length != 0)
-        {
+        if (filtered.length != 0) {
             tmpMarkers.push(marker);
             marker.setVisible(true);
         }
     }
-    
+
     markercluster(map, tmpMarkers);
 }
 
