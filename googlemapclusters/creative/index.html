@@ -19,7 +19,7 @@
                     <input type="text" placeholder="Find your space today">
                 </div>
                 <div class="filter_province large-2 medium-6 small-12 columns">
-                    <select>
+                    <select id="filter_by_province">
                         <option value="">Location</option>
                         <option value="Alberta">Alberta</option>
                         <option value="British Columbia">British Columbia</option>
@@ -83,10 +83,11 @@
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/what-input/dist/what-input.js"></script>
     <script src="../bower_components/foundation-sites/dist/js/foundation.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuO2ABqI1946pORvrBmpMHEXamSiRQ7M"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuO2ABqI1946pORvrBmpMHEXamSiRQ7M"></script>
     <!-- <script src="../etc/search.json"></script> -->
     <script src="../etc/data.json"></script>
     <script src="../js/markerclustererplus.js"></script>
+    <script src="../js/infobox.js"></script>
     <script src="../js/app.js"></script>
     <!-- <script>
       google.maps.event.addDomListener(window, 'load', gmap.init);
