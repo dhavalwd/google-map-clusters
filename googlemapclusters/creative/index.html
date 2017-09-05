@@ -18,7 +18,7 @@
                 <div class="filter_location large-6 medium-6 small-12 columns">
                     <input type="text" placeholder="Find your space today">
                 </div>
-                <div class="filter_province large-2 medium-6 small-12 columns">
+                <div class="filter_province large-2 medium-6 small-4 columns">
                     <select id="filter_by_province">
                         <option value="">Location</option>
                         <option value="Alberta">Alberta</option>
@@ -36,7 +36,7 @@
                         <option value="Yukon">Yukon</option>
                     </select>
                 </div>
-                <div class="filter_type large-2 medium-6 small-12 columns">
+                <div class="filter_type large-2 medium-6 small-4 columns">
                     <select>
                         <option value="">Type</option>
                         <option value="freestanding">Retail - Freestanding</option>
@@ -45,7 +45,7 @@
                         <option value="office">Office</option>
                     </select>
                 </div>
-                <div class="filter_size large-2 medium-6 small-12 columns">
+                <div class="filter_size large-2 medium-6 small-4 columns">
                     <select>
                         <option value="">Size</option>
                         <option value="large">Large</option>
@@ -53,6 +53,14 @@
                         <option value="small">Small</option>
                     </select>
                 </div>
+            </div>
+          </div>
+          <div class="tab_container">
+            <div class="properties_tab" data-tab="properties_container">
+              <i class="fa fa-list-ul" aria-hidden="true"></i>
+            </div>
+            <div class="map_tab" data-tab="map">
+              <i class="fa fa-map-marker" aria-hidden="true"></i>
             </div>
           </div>
           <div class="map_container section--full-height row">
@@ -84,6 +92,7 @@
     <script src="../bower_components/what-input/dist/what-input.js"></script>
     <script src="../bower_components/foundation-sites/dist/js/foundation.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuO2ABqI1946pORvrBmpMHEXamSiRQ7M"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/enquire.js/2.1.6/enquire.min.js"></script>
     <!-- <script src="../etc/search.json"></script> -->
     <script src="../etc/data.json"></script>
     <script src="../js/markerclustererplus.js"></script>

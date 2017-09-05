@@ -194,6 +194,8 @@ function showmarkers() {
 
         marker.addListener('click', function () {
             markerclick(item, mylatlng, marker);
+            map.setZoom(14);
+            map.setCenter(marker.getPosition());
         });
 
         titleText = item.property_name;
@@ -336,7 +338,7 @@ function filterMarkers(province, type, cursize, refresh) {
     // markercluster(map, tmpMarkers);
     // return false;
 
-    var bounds = paddedBounds(180, 80, 80, 80); // paddedBounds(north,south,east,west);
+    var bounds = paddedBounds(180, 180, 180, 180); // paddedBounds(north,south,east,west);
     var tmpPadMarkers = [];
     var tmpid = [];
     var k = 0;
@@ -382,54 +384,6 @@ function filterMarkers(province, type, cursize, refresh) {
     prop_container.find(".heading").html("<p>" + k + " PROPERTIES</p>");
     // console.log(tmpPadMarkers);
 
-    // if(refresh == true)
-    // {
-    //     // var bounds = paddedBounds(180, 180, 120, 120); // paddedBounds(north,south,east,west);
-    //     // var tmpPadMarkers = [];
-    //     // var k=0;
-    //     // for (var i = 0; i < tmpMarkers.length; i++) {
-    //     //     // console.log(map.getBounds());
-    //     //     if (bounds.contains(tmpMarkers[i].getPosition())) {
-    //     //         // markers[i] in visible bounds
-    //     //         // console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
-    //     //         // position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
-    //     //         tmpPadMarkers.push(tmpMarkers[i]);
-    //     //         tmpMarkers[i].setVisible(true);
-    //     //         $("#markerlist > div").hide();
-    //     //         $("#markerlist").find("div#" + tmpMarkers[i].get('id')).addClass("visible").css("display", "block");
-    //     //         // console.log(tmpMarkers.length);
-    //     //         k++;
-    //     //     } else {
-    //     //         // markers[i] is not in visible bounds
-    //     //         tmpMarkers[i].setVisible(false);
-    //     //         $("#markerlist").find("div#" + tmpMarkers[i].get('id')).removeClass("visible").css("display", "none");
-    //     //     }
-    //     // }
-    //     // prop_container.find(".heading").html("<p>" + k + " PROPERTIES</p>");
-    //     // console.log(tmpPadMarkers);
-    // }
-    // else{
-    //     setTimeout(function () {
-    //         // console.log("after 300 ms");
-    //         // Not seeing all Markers so side panel comes out
-    //         maphtml.removeClass("large-12").addClass("large-10");
-    //         prop_container.addClass("active");
-    //         prop_container.find('.properties_data').addClass("active");
-    //         prop_container.find(".loading_list").removeClass("active");
-    //         // prop_container.find(".redosearch").addClass("visible");
-    //         // maphtml.css("width","75%");
-    //         prop_container.find(".heading").html("<p>" + tmpItems.length + " PROPERTIES</p>");
-    //         $("#markerlist > div").remove();
-    //         tmpItems.forEach(function(item, index) {
-    //             panel.append("<div id='" + item.property_id + "' class='marker_item' data-href='"+item.url+"'><div class='marker_image'><img src='" + item.image + "' alt='' /></div><div class='marker_details'><span class='marker_title'><a id='item-" + index + "' href='#' class=" + title.className + ">" + item.property_name + "</a></span><span class='marker_address'>" + item.city + ", "+item.province+"</span></div>");
-    //         });
-    //     }, 300);
-    // }
-
-    // document.getElementById("item-" + i).addEventListener("mouseover", function () {
-    //     markerclick(item, mylatlng, marker);
-    // });
-
     markercluster(map, tmpPadMarkers);
 }
 
@@ -449,10 +403,15 @@ function findAddress(address) {
         }, function (results, status) {
 
             if (status == google.maps.GeocoderStatus.OK) {
-
+                // console.info("Map in Geocode");
+                // console.log(map);
                 if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+                    // map.setCenter(results[0].geometry.location);
                     console.log(results);
-                    if (results && results[0] && results[0].geometry && results[0].geometry.viewport) map.fitBounds(results[0].geometry.viewport);
+                    if (results && results[0] && results[0].geometry && results[0].geometry.viewport) {
+                        map.fitBounds(results[0].geometry.viewport);
+                        map.setZoom(5);
+                    }
                 } else {
 
                     alert("No results found");

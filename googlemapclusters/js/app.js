@@ -4,9 +4,13 @@ $(document).foundation();
 function set_full_height(section) {
     var window_width = jQuery(window).width();
     var window_height = jQuery(window).height();
-    var filter_height = jQuery(".filter").height();
 
-    var full_height = window_height - 155; // remove header height
+    var offsettop = parseInt(jQuery(".filter").css("padding-top"));
+    var offsetbtm = parseInt(jQuery(".filter").css("padding-bottom"));
+    var totaloffset = offsettop + offsetbtm;
+
+    var filter_height = jQuery(".filter").height();
+    var full_height = window_height - filter_height - totaloffset; // remove header height
 
     var minimum_height = 480;
 
@@ -87,6 +91,7 @@ function initMap() {
     // console.log(datanew);
     // var latlng = new google.maps.LatLng(39.91, 116.38);
     var latlng = new google.maps.LatLng(58.186561, -101.439330); // More related to Canada on Map
+
     var options = {
         // 'zoom': 2,
         'zoom': 4,
@@ -466,4 +471,18 @@ $(document).ready(function () {
         var refresh = true;
         filterMarkers(curprovince, curtype, cursize, refresh);
     })
+
+    // Medium or smaller iPad or less size
+    enquire.register("screen and (max-width: 63.9375em)", {
+        match : function() {
+            $(".map_container > div:nth-child(2)").hide();
+            $(".tab_container > div:nth-child(1)").addClass("active");
+            $(".tab_container > div").on("click", function(){
+                var tabname = $(this).attr("data-tab");
+                $(".map_container > div").removeClass("active").hide();
+                $(this).addClass("active");
+                $(".map_container").find("#"+tabname).fadeIn(800);
+            });     
+        }
+    });
 });

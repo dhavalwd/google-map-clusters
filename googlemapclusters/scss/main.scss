@@ -7,12 +7,45 @@ $border-gray: #ececec;
 Custom Variables ends here.
 *********************************/
 
-
-
 .grid-container {
     float: left;
     width: 100%;
     max-width: 100%;
+}
+
+.node-property {
+    float: left;
+    width: 100%;
+    position: relative;
+}
+
+.tab_container {
+    float: left;
+    width: 100%;
+    position: absolute;
+    bottom: 20px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+
+    & > div {
+        float: left;
+        padding: 10px 20px;
+        background: #f2f2f2;
+        border: 1px solid $navy;
+        display: flex;
+        cursor: pointer;
+        align-items: center;
+
+        &:first-child {
+            border-right: none;
+        }
+
+        i{
+            color: $navy;
+            font-size: 1.4rem;
+        }
+    }
 }
 
 .map_container {
@@ -23,7 +56,7 @@ Custom Variables ends here.
 
 #map {
     height: 100%;
-    width: 75%;
+    width: 100%;
     float: left;
     transition: all 0.3s ease-in;
 }
@@ -34,7 +67,7 @@ Custom Variables ends here.
     position: relative;
     display: none;
     padding: 0;
-    width: 25%;
+    width: 100%;
     overflow: scroll;
 
     &.active {
@@ -241,14 +274,6 @@ Custom Variables ends here.
 }
 
 
-.filter {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    background-color: #256492;
-    max-width: 100%;
-}
-
 .loading_list {
     visibility: hidden;
     opacity: 0;
@@ -310,9 +335,14 @@ Custom Variables ends here.
 }
 
 .filter {
-    padding: 40px;
+    padding: 10px 0;
     float: left;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: #256492;
+    max-width: 100%;
 
     .filter_container {
         padding: 0;
@@ -338,5 +368,16 @@ Custom Variables ends here.
     }
 }
 
+@include breakpoint(large) { 
+    #map {
+        width: 70%;
+    }
 
+    .properties_container {
+        width: 30%;
+    }
 
+    .filter {
+        padding: 40px;
+    }
+}
