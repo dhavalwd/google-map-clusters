@@ -21,9 +21,11 @@ Custom Variables ends here.
 
 .tab_container {
     float: left;
-    width: 100%;
+    width: 140px;
     position: absolute;
     bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
     display: flex;
     justify-content: center;
@@ -45,6 +47,14 @@ Custom Variables ends here.
             color: $navy;
             font-size: 1.4rem;
         }
+
+        &.active {
+            background-color: $navy;
+            
+            i {
+                color: $white;
+            }
+        }
     }
 }
 
@@ -52,14 +62,16 @@ Custom Variables ends here.
     max-width: 100%;
     float: left;
     width: 100%;
+
+    #map {
+        height: 100%;
+        width: 100%;
+        float: left;
+        transition: all 0.3s ease-in;
+    }
 }
 
-#map {
-    height: 100%;
-    width: 100%;
-    float: left;
-    transition: all 0.3s ease-in;
-}
+
 
 .properties_container {
     float: left;
@@ -73,69 +85,79 @@ Custom Variables ends here.
     &.active {
         display: block;
     }
-}
 
-.properties_data {
-    float: left;
-    height: 100%;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease-in;
-    width: 100%;
-
-    &.active {
-        visibility: visible;
-        opacity: 1;
-    }
-}
-
-.head_container {
-    float: left;
-    width: 100%;
-    padding: 20px 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-
-    .heading {
+    .properties_data {
         float: left;
-        width: 70%;
-
-        p{
-            text-transform: uppercase;
-            font-size: 1.5rem;
-            color: $navy;
-            font-family: $body-font-family-bold;
-            margin: 0;
-            padding-top: 5px;
-        }
-    }
-
-    .redosearch {
-        float: left;
-        width: 30%;
+        height: 100%;
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s ease-in;
+        width: 100%;
 
-        a {
-            margin: 0;
+        &.active {
+            visibility: visible;
+            opacity: 1;
         }
 
-        &.visible {
-            opacity: 1;
-            visibility: visible;
+        .head_container {
+            float: left;
+            width: 100%;
+            // padding: 20px 40px;
+            padding: 5px 40px 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            max-height: 55px;
+
+            .heading {
+                float: left;
+                // width: 70%;
+                width: 100%;
+                border-bottom: 5px solid $navy;
+
+                p{
+                    text-transform: uppercase;
+                    font-size: 1.5rem;
+                    color: $navy;
+                    font-family: $body-font-family-bold;
+                    margin: 0;
+                    padding-top: 5px;
+                }
+            }
+
+            .redosearch {
+                float: left;
+                width: 30%;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease-in;
+
+                a {
+                    margin: 0;
+                }
+
+                &.visible {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
         }
     }
 }
+
 
 .allmarkers {
     float: left;
     width: 100%;
     max-height: 100%;
     overflow: scroll;
+    padding-top: 20px;
+    height: calc(100% - 55px);
 
     #markerlist {
+        float: left;
+        width: 100%;
+        height: 100%;
 
         & > div.marker_item {
             float: left;
@@ -148,10 +170,14 @@ Custom Variables ends here.
 
             .marker_image {
                 float: left;
-                width: 20%;
+                width: 100%;
+                height: 100px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
 
                 img {
-                    display: block;
+                    display: none;
                     width: 100%;
                     height: auto;
                     max-width: 100%;
@@ -160,24 +186,26 @@ Custom Variables ends here.
 
             .marker_details {
                 float: left;
-                width: 80%;
-                padding-left: 20px;
+                width: 100%;
+                padding-top: 10px;
 
                 .marker_title {
                     display: block;
-                    padding-bottom: 10px;
-                    
-                    a {
-                        color: $navy;
-                        text-transform: uppercase;
-                        padding-bottom: 3px;
-                        border-bottom: 1px solid $blue;
-                        display: block;
-                    }
+                    padding-bottom: 5px;
+                    color: $navy;
+                    text-transform: uppercase;
+                    margin-bottom: 5px;
+                    border-bottom: 1px solid $blue;
+                    display: block;
                 }
 
                 .marker_address {
                     color: $dark-gray;
+                }
+
+                .property_link {
+                    float: left;
+                    width: 100%;
                 }
             }
         }
@@ -205,6 +233,7 @@ Custom Variables ends here.
     float: left;
     width: 100%;
     max-width: 342px;
+    // max-width: 240px;
     padding: 25px 20px 20px;
     margin-top: 8px;
     box-shadow: rgba(0, 0, 0, 0.6) 0px 1px 6px;
@@ -235,7 +264,8 @@ Custom Variables ends here.
         width: 100%;
         max-width: 280px;
         padding: 20px 0;
-        height: 180px;
+        // height: 180px;
+        height: 100px;
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
@@ -268,6 +298,16 @@ Custom Variables ends here.
 
         span {
             color: $dark-gray;
+            font-size: 0.9rem;
+        }
+    }
+
+    .property_link_container {
+        float: left;
+        width: 100%;
+        padding-top: 5px;
+
+        a {
             font-size: 0.9rem;
         }
     }
@@ -368,16 +408,85 @@ Custom Variables ends here.
     }
 }
 
-@include breakpoint(large) { 
-    #map {
-        width: 70%;
+@include breakpoint(large) {
+    .map_container {
+        #map {
+            width: 70%;
+        }
+
+        .properties_container {
+            width: 30%;
+            display: block;
+
+            .properties_data.active {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
     }
 
-    .properties_container {
-        width: 30%;
-    }
+    
 
     .filter {
         padding: 40px;
+    }
+
+    .tab_container {
+        display: none;
+    }
+
+    .allmarkers {
+
+        #markerlist {
+
+            & > div.marker_item {
+
+                width: calc(100% - 80px);
+
+                .marker_image {
+                    width: 20%;
+                }
+
+                .marker_details {
+                    width: 80%;
+                    padding-left: 20px;
+                    padding-top: 0;
+                }
+            }
+        }
+
+    }
+}
+
+@include breakpoint(medium only) {
+    .allmarkers {       
+        #markerlist {
+
+            & > div.marker_item {
+                width: calc(50% - 80px);
+            }
+        }
+    }
+}
+
+@media screen and #{breakpoint(medium)} and #{breakpoint(landscape)} {
+    .allmarkers {
+
+        #markerlist {
+
+            & > div.marker_item {
+                width: calc(100% - 80px);
+
+                // .marker_image {
+                //     width: 100%;
+                // }
+
+                .marker_details {
+                    // width: 100%;
+                    padding-top: 0;
+                }
+            }
+        }
+
     }
 }

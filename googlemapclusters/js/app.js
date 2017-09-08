@@ -12,7 +12,7 @@ function set_full_height(section) {
     var filter_height = jQuery(".filter").height();
     var full_height = window_height - filter_height - totaloffset; // remove header height
 
-    var minimum_height = 480;
+    var minimum_height = 440;
 
     // ad touch shim for iOS
     if (jQuery('html').hasClass('touch')) {
@@ -55,6 +55,10 @@ function paddedBounds(npad, spad, epad, wpad) {
     return new google.maps.LatLngBounds(pt1, pt2);
 }
 
+function remove(array, element) {
+    return array.filter(e => e !== element);
+}
+
 
 // All Functionality starts from here.
 var map;
@@ -72,9 +76,23 @@ promise.done(function(datatest) {
 //   datanew = datatest;
   items = datatest;
   console.log(items);
-  initMap();
+    // google.maps.event.addDomListener(window, 'load', function () {
+    //     initMap();
+    // });
+    enquire.register("screen and (max-width: 63.9375em)", {
+        match : function() {
+            google.maps.event.addDomListener(window, 'load', function () {
+                initMap();
+            });
+        }
+    });
+    enquire.register("screen and (min-width: 64em)", {
+        match : function() {
+            initMap();
+        }
+    });
+    // initMap();
 });
-
 
 var panel = $("#markerlist");
 var maphtml = $("#map");
@@ -82,23 +100,241 @@ var prop_container = $("#properties_container");
 var filter_container = $('.filter_container');
 var titleText;
 panel.innerHTML = '';
+var curprovince = "";
+var curtype = "";
+var cursize_from = 0;
+var cursize_to = 0;
+var cursize_min = 0;
+var cursize_max = 0;
 
 var item = document.createElement('DIV');
 var title = document.createElement('A');
+
+// Google map styling using Snazzy Maps (https://snazzymaps.com/)
+var gmstyles = [
+    {
+        "featureType": "administrative",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#a7a7a7"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#737373"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#efefef"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#dadada"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#696969"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#b3b3b3"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ffffff"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#d6d6d6"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#ffffff"
+            },
+            {
+                "weight": 1.8
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#d7d7d7"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "color": "#808080"
+            },
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#d3d3d3"
+            }
+        ]
+    }
+];
+
+
+var filter_markers_main = function (data) {
+    console.log("filter_markers_main");
+    prop_container.find('.properties_data').removeClass("active");
+    prop_container.find(".loading_list").addClass("active");
+
+    curprovince = filter_container.find(".filter_province select option:selected").attr('value');
+    curtype = filter_container.find(".filter_type select option:selected").attr('value');
+    // console.log(curprovince, curtype, cursize_from, cursize_to);
+    
+    setTimeout(function(){
+        filterMarkers(curprovince, curtype, cursize_from, cursize_to);
+    }, 300);
+}
 
 // Initialize map
 function initMap() {
     // console.log(datanew);
     // var latlng = new google.maps.LatLng(39.91, 116.38);
     var latlng = new google.maps.LatLng(58.186561, -101.439330); // More related to Canada on Map
+    var options = '';
 
-    var options = {
-        // 'zoom': 2,
-        'zoom': 4,
-        'center': latlng,
-        'mapTypeId': google.maps.MapTypeId.ROADMAP
-    };
+    prop_container.find("#markerlist > div").remove();
+    
+    /***** MAP Options starts here ******/
 
+    // large and up
+    enquire.register("screen and (min-width: 64em)", {
+        match : function() {
+            console.log("Map at zoom 4");
+            options = {
+                // 'zoom': 2,
+                'zoom': 4,
+                'center': latlng,
+                'mapTypeId': google.maps.MapTypeId.ROADMAP,
+                styles: gmstyles
+            };
+        }
+    });
+
+    // medium and down
+    enquire.register("screen and (max-width: 63.9375em)", {
+        match : function() {
+            console.log("Map at zoom 2");
+            options = {
+                // 'zoom': 2,
+                'zoom': 2,
+                'center': latlng,
+                'mapTypeId': google.maps.MapTypeId.ROADMAP,
+                styles: gmstyles
+            };
+        }
+    });
+    /***** MAP Options ends here ******/
+
+    // Initiate map here.
     map = new google.maps.Map(document.getElementById('map'), options);
 
     // Show markers initate
@@ -106,14 +342,10 @@ function initMap() {
 
     geocoder = new google.maps.Geocoder();
 
-    // var tmpMarkers = [];
-
-
-    // Adding special class on Infowindow for custom style
-    google.maps.event.addListener(infoWindow,'domready',function(){ 
-        $('.info')//the root of the content
-        .closest('.gm-style-iw')
-            .parent().addClass('custom-iw');
+    google.maps.event.addDomListener(window, "resize", function() {
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
     });
 
     // Bounds changed event on map
@@ -128,55 +360,9 @@ function initMap() {
     var position = '';
     // Idle event on map
     google.maps.event.addListener(map, 'idle', function (event) {
-        // var bounds = paddedBounds(180, 180, 120, 120); // paddedBounds(north,south,east,west);
-        // // clearMarkers();
-        // var tmpPadMarkers = [];
-        
-        var curprovince = filter_container.find(".filter_province select option:selected").attr('value');
-        var curtype = filter_container.find(".filter_type select option:selected").attr('value');
-        var cursize = filter_container.find(".filter_size select option:selected").attr('value');
-        // console.log("Prop container"+prop_container);
-        // console.log(curprovince+" "+curtype+" "+cursize);
-        filterMarkers(curprovince, curtype, cursize);
+        console.log("idle");
+        filter_markers_main();
         console.log("Idle event");
-        // k = 0;
-        // for (var i = 0; i < markers.length; i++) {
-        //     // console.log(map.getBounds());
-        //     if (bounds.contains(markers[i].getPosition())) {
-        //         // markers[i] in visible bounds
-        //         // console.log("marker id -> "+markers[i].get('id')+"------ latitude -> "+markers[i].position.lat()+"-------- Longitude -> "+markers[i].position.lat());
-        //         // position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
-        //         tmpPadMarkers.push(markers[i]);
-        //         markers[i].setVisible(true);
-        //         // $("#markerlist > div").hide();
-        //         // $("#markerlist").find("div#" + markers[i].get('id')).addClass("visible").css("display", "block");
-        //         // console.log(markers.length);
-        //         k++;
-        //     } else {
-        //         // markers[i] is not in visible bounds
-        //         markers[i].setVisible(false);
-        //         // $("#markerlist").find("div#" + markers[i].get('id')).removeClass("visible").css("display", "none");
-        //     }
-        // }
-        // markercluster(map, tmpPadMarkers);
-        // setTimeout(function () {
-        //     if (k != markers.length) {
-        //         // Not seeing all Markers so side panel comes out
-        //         maphtml.removeClass("large-12").addClass("large-10");
-        //         prop_container.addClass("active");
-        //         prop_container.find('.properties_data').addClass("active");
-        //         prop_container.find(".loading_list").removeClass("active");
-        //     } else {
-        //         // Seeing all markers on Map so side panel goes away
-        //         maphtml.removeClass("large-10").addClass("large-12");
-        //         prop_container.removeClass("active").find('.properties_data').removeClass("active");
-        //         prop_container.find(".loading_list").removeClass("active");
-        //     }
-        //     // prop_container.find(".redosearch").addClass("visible");
-        //     // maphtml.css("width","75%");
-        //     prop_container.find(".heading").html("<p>" + k + " PROPERTIES</p>");
-        // }, 300);
-        // console.log("map zoomed in or zoomed out or moved or changed");
     });
 }
 
@@ -189,19 +375,43 @@ function showmarkers() {
     // Note: The code uses the JavaScript Array.prototype.map() method to
     // create an array of markers based on a given "locations" array.
     // The map() method here has nothing to do with the Google Maps API.
+
+    var nonblankitems = [];
+    var boundsfit = new google.maps.LatLngBounds();
     markers = items.map(function (item, i) {
         var mylatlng = { lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) };
-        // console.log(mylatlng);
+
+        if(item.latitude != "" || item.longitude != "")
+        {
+            nonblankitems.push(item);
+        }
+        
         var marker = new google.maps.Marker({
-            position: mylatlng
+            position: mylatlng,
+            icon: '../images/marker.png'
         });
 
         marker.set("id", item.property_id);
 
         marker.addListener('click', function () {
+            
             markerclick(item, mylatlng, marker);
-            map.setZoom(14);
-            map.setCenter(marker.getPosition());
+            // map.setZoom(14);
+            // map.setCenter(marker.getPosition());
+        });
+
+        marker.addListener('mouseover', function () {
+            // markerclick(item, mylatlng, marker);
+            marker.setIcon("../images/marker-hover.png");
+            // map.setZoom(14);
+            // map.setCenter(marker.getPosition());
+        });
+
+        marker.addListener('mouseout', function () {
+            // markerclick(item, mylatlng, marker);
+            marker.setIcon("../images/marker.png");
+            // map.setZoom(14);
+            // map.setCenter(marker.getPosition());
         });
 
         titleText = item.property_name;
@@ -213,24 +423,40 @@ function showmarkers() {
         if (titleText === '') {
             titleText = 'No title';
         }
-        panel.append("<div id='" + item.property_id + "' class='marker_item' data-href='"+item.url+"'><div class='marker_image'><img src='" + item.image + "' alt='' /></div><div class='marker_details'><span class='marker_title'><a id='item-" + i + "' href='#' class=" + title.className + ">" + titleText + "</a></span><span class='marker_address'>" + item.city + ", "+item.province+"</span></div>");
+        panel.append("<div id='" + item.property_id + "' class='marker_item' data-href='"+item.url+"'><style>#"+item.property_id+" .marker_image { background-image: url('"+item.image+"'); }</style><div class='marker_image'><img src='" + item.image + "' alt='' /></div><div class='marker_details'><span class='marker_title'>" + titleText + "</span><span class='marker_address'>" + item.city + ", "+item.province+"</span><span class='property_link'><a href='"+item.url+"'>Know more</a></span></div></div>");
 
         // document.getElementById("item-"+i).addEventListener("click", function(){
         //     markerclick(item, mylatlng, marker);
         // });
 
-        document.getElementById("item-" + i).addEventListener("mouseover", function () {
-            markerclick(item, mylatlng, marker);
+        document.getElementById(item.property_id).addEventListener("mouseover", function () {
+            // markerclick(item, mylatlng, marker);
+            marker.setIcon("../images/marker-hover.png");
+        });
+        document.getElementById(item.property_id).addEventListener("mouseout", function () {
+            // markerclick(item, mylatlng, marker);
+            marker.setIcon("../images/marker.png");
         });
 
+        // For larger screen
+        enquire.register("screen and (min-width: 64em)", {
+            match : function() {
+                document.getElementById(item.property_id).addEventListener("click", function () {
+                    markerclick(item, mylatlng, marker);
+                    marker.setIcon("../images/marker-hover.png");
+                });
+            }
+        });
         
 
+        boundsfit.extend(marker.getPosition());
+        
         i++;
-
+    
         return marker;
     });
 
-    // prop_container.find(".heading").text("")
+    prop_container.find(".heading").html("<p>" + nonblankitems.length + " PROPERTIES</p>");
 
     // infoWindow = new google.maps.InfoWindow();
     var ibOptions = {
@@ -253,25 +479,54 @@ function showmarkers() {
     infoWindow = new InfoBox(ibOptions);
 
     var closeInfoBox = document.getElementById("closebtn");
-    // google.maps.event.addDomListener(closeInfoBox, 'click', function(){
-    //     infoWindow.close(map, marker);
-    //     $("#markerlist div").removeClass("active");
-    // });
 
     google.maps.event.addListener(infoWindow, 'closeclick', function () {
         $("#markerlist div").removeClass("active");
     });
+
+    // To recenter map when window resize.
+    map.fitBounds(boundsfit);
+
+    // Create new marker cluster
     var markerCluster = new MarkerClusterer();
+    console.log("Inside showmarkers");
     markercluster(map, markers);
-    // Add a marker clusterer to manage the markers.
-    // var markerCluster = new MarkerClusterer(map, markers,
-    //     {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 }
 
+
+// Function that creates new Markercluster
 function markercluster(map, markers) {
-    markerCluster = new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+    mcOptions = {styles: [{
+            height: 53,
+            url: "../images/m1.png",
+            width: 53
+        },
+        {
+            height: 56,
+            url: "../images/m2.png",
+            width: 56
+        },
+        {
+            height: 66,
+            url: "../images/m3.png",
+            width: 66
+        },
+        {
+            height: 78,
+            url: "../images/m4.png",
+            width: 78
+        },
+        {
+            height: 90,
+            url: "../images/m5.png",
+            width: 90
+        }
+    ]}
+    markerCluster = new MarkerClusterer(map, markers, mcOptions);
+    console.log("In Marker Cluster");
 }
 
+// Function that runs on marker click. It basically opens Info Window with content
 function markerclick(item, latlng, marker) {
 
     latlng = new google.maps.LatLng(latlng.lat, latlng.lng);
@@ -285,7 +540,7 @@ function markerclick(item, latlng, marker) {
     $("#markerlist").find("div#" + item.property_id).addClass("active");
     // $(".allmarkers").scrollTo("#"+item.property_id, 400);
 
-    var infoHtml = '<div class="info"><div id="closebtn"></div><style>.info-body {background-image: url("http://localhost/google-map-clusters/googlemapclusters/images/turtle.jpg")}</style><div class="info-body">' + '<img src="http://localhost/google-map-clusters/googlemapclusters/images/turtle.jpg" class="info-img"/></div><div class="info_title"><h3>' + title + '</h3></div>' + '<div class="info_address"><span>' + item.address+'</span></div></div></div>';
+    var infoHtml = '<div class="info"><div id="closebtn"></div><style>.info-body {background-image: url("http://localhost/google-map-clusters/googlemapclusters/images/turtle.jpg")}</style><div class="info-body">' + '<img src="http://localhost/google-map-clusters/googlemapclusters/images/turtle.jpg" class="info-img"/></div><div class="info_title"><h3>' + title + '</h3></div>' + '<div class="info_address"><span>' + item.address+'</span></div><div class="property_link_container"><a class="property_link" href="'+item.url+'">Know More</a></div></div>';
     infoWindow.setContent(infoHtml);
     infoWindow.setPosition(latlng);
     // infoWindow.setOptions({disableAutoPan: true});
@@ -294,8 +549,10 @@ function markerclick(item, latlng, marker) {
 
 // Everthing about filter starts from here.
 
+// Multifilter function that provides with new result of array
 function multiFilter(array, filters) {
   const filterKeys = Object.keys(filters);
+//   console.log(filters);
   
   // filters all elements passing the criteria
   return array.filter((item) => {
@@ -304,9 +561,28 @@ function multiFilter(array, filters) {
   });
 }
 
+function filter_size_range(array, filter_size)
+{
+    // console.log(array);
+    // console.log(array[0].field_search_size);
+    // console.info("Information----------------------");
+    // console.log("Item size"+array[0].field_search_size+" ----- From: "+filter_size.field_search_size_from+" To: "+filter_size.field_search_size_to);
+    var tmpsize = parseInt(array[0].field_search_size);
+    var tmpfrom = parseInt(filter_size.field_search_size_from);
+    var tmpto = parseInt(filter_size.field_search_size_to);
+    if(tmpsize >= tmpfrom && tmpsize <= tmpto)
+    {
+        // console.log("entered");
+        // console.info("++++ True ++++");
+        return array;
+    }
+}
 
-function filterMarkers(province, type, cursize, refresh) {
+// Filter markers checks the filter and then regenerate markercluster and properties list on side.
+function filterMarkers(province, type, cursize_from, cursize_to) {
+    console.log("filterMarkers");
     clearMarkers();
+    console.log("clearMarkers");
     var tmpMarkers = [];
     var tmpItems = [];
     
@@ -317,13 +593,19 @@ function filterMarkers(province, type, cursize, refresh) {
     }
     if(type.length != 0)
     {
-        filters.type = [type];   
+        filters.field_property_type = [type];
     }
 
-    if(cursize.length != 0)
-    {
-        filters.size = cursize;
-    }
+    let filter_size = {};
+    filter_size.field_search_size_from = [cursize_from];
+    filter_size.field_search_size_to = [cursize_to];
+    
+    // if(cursize.length != 0)
+    // {
+    //     filters.field_search_size = cursize;
+    // }
+
+    // console.log(filters);
     
     // console.info("Filters");
     // console.log(filters);
@@ -332,16 +614,24 @@ function filterMarkers(province, type, cursize, refresh) {
     for (i = 0; i < markers.length; i++) {
         marker = markers[i];
         item = items[i];
+        
 
         var tmp = [];
         tmp.push(item);
+        
 
         var filtered = multiFilter(tmp, filters);
+        // console.log(filtered);
         if(filtered.length != 0)
         {
-            tmpMarkers.push(marker);
-            tmpItems.push(item);
-            marker.setVisible(true);
+            var tmpfiltered = filter_size_range(filtered, filter_size);
+            // console.log(tmpfiltered);
+            if(tmpfiltered)
+            {
+                tmpMarkers.push(marker);
+                tmpItems.push(item);
+                // marker.setVisible(true);   
+            }
         }
     }
     // console.info("Tmp Markers");
@@ -349,7 +639,24 @@ function filterMarkers(province, type, cursize, refresh) {
     // markercluster(map, tmpMarkers);
     // return false;
 
-    var bounds = paddedBounds(180, 180, 180, 180); // paddedBounds(north,south,east,west);
+    console.log("Filter Done");
+
+    var bounds = '';
+
+    enquire.register("screen and (min-width: 64em)", {
+        match : function() {
+            bounds = paddedBounds(100, 10, 10, 10); // paddedBounds(north,south,east,west);
+        }
+    });
+
+    enquire.register("screen and (max-width: 63.9375em)", {
+        match : function() {
+            bounds = paddedBounds(10, 10, 10, 10); // paddedBounds(north,south,east,west);
+            // console.log(bounds);
+        }
+    });
+
+    // var bounds = paddedBounds(180, 180, 180, 180); // paddedBounds(north,south,east,west);
     var tmpPadMarkers = [];
     var tmpid = [];
     var k=0;
@@ -374,6 +681,8 @@ function filterMarkers(province, type, cursize, refresh) {
             $("#markerlist").find("div#" + tmpMarkers[i].get('id')).removeClass("visible");
         }
     }
+
+    console.log("Out of bound markers gone");
     // console.info("Tmp IDs");
     // console.log(tmpid);
     // console.info("Tmp Pad Markers");
@@ -396,17 +705,22 @@ function filterMarkers(province, type, cursize, refresh) {
     prop_container.find(".heading").html("<p>" + k + " PROPERTIES</p>");
     // console.log(tmpPadMarkers);
 
+    // console.log(tmpPadMarkers);
+    console.log("Before marker cluster created");
     markercluster(map, tmpPadMarkers);
+    console.log("After marker cluster created");
 
 }
 
+
+// Just to clear all markers on the map.
 function clearMarkers() {
     markerCluster.clearMarkers();
 }
 
 // Function to change map zoom and focus based on Selected province
-function findAddress(address) {
-
+function findAddress(address, zoom) {
+    console.log("findAddress");
     if (address != '' && geocoder) {
 
       geocoder.geocode({ 'address': address
@@ -420,10 +734,10 @@ function findAddress(address) {
             // console.log(map);
           if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
             // map.setCenter(results[0].geometry.location);
-            console.log(results);
+            // console.log(results);
             if (results && results[0] && results[0].geometry && results[0].geometry.viewport) {
                 map.fitBounds(results[0].geometry.viewport);
-                map.setZoom(5);
+                map.setZoom(zoom);
             }
           } else {
 
@@ -438,51 +752,232 @@ function findAddress(address) {
   }
 
 
-
+// When dom loaded.
 
 $(document).ready(function () {
+
     $('.section--full-height').each(function () {
         set_full_height($(this));
     });
+
+    var save_range_slider = function(data) {
+        cursize_from = data.from;
+        cursize_to = data.to;
+        cursize_min = data.min;
+        cursize_max = data.max;
+    }
+
+    // var filter_markers_main =  function (data) {
+    //     prop_container.find('.properties_data').removeClass("active");
+    //     prop_container.find(".loading_list").addClass("active");
+
+    //     curprovince = filter_container.find(".filter_province select option:selected").attr('value');
+    //     curtype = filter_container.find(".filter_type select option:selected").attr('value');
+    //     // console.log(curprovince, curtype, cursize_from, cursize_to);
+        
+    //     setTimeout(function(){
+    //         filterMarkers(curprovince, curtype, cursize_from, cursize_to);
+    //     }, 300);
+    // }
+
+
+    // Range slider for Size
+    $("#size_filter").ionRangeSlider({
+        type: "double",
+        grid: false,
+        min: 0,
+        max: 200000,
+        from: 0,
+        to: 200000,
+        onStart: function(data) {
+            save_range_slider(data);
+        },
+        onChange: function(data)
+        {
+            save_range_slider(data);
+        },
+        onFinish: function (data) {
+            // save_range_slider(data);
+            filter_markers_main(data);
+        }
+    });
+
+    // Filter Functionality
     var prop_container = $(".properties_container");
-    $(".filter_container").change(function () {
-        console.log("selection changed");
-        prop_container.find('.properties_data').removeClass("active");
-        prop_container.find(".loading_list").addClass("active");
-        var curprovince = $(this).find(".filter_province select option:selected").attr('value');
-        var curtype = $(this).find(".filter_type select option:selected").attr('value');
-        var cursize = $(this).find(".filter_size select option:selected").attr('value');
-        findAddress(curprovince);
-        setTimeout(function(){
-            filterMarkers(curprovince, curtype, cursize);
-        }, 300);
+    $(".filter_type select").change(function () {
+        // console.log("selection changed");
+        // prop_container.find('.properties_data').removeClass("active");
+        // prop_container.find(".loading_list").addClass("active");
+        // curprovince = filter_container.find(".filter_province select option:selected").attr('value');
+        // curtype = filter_container.find(".filter_type select option:selected").attr('value');
+        // cursize_from = data.from;
+        // cursize_to = data.to;
+        
+        // setTimeout(function(){
+        //     filterMarkers(curprovince, curtype, cursize);
+        // }, 300);
+        filter_markers_main();
+    });
+
+    $(".filter_container .filter_province select").change(function() {
+        console.log("On change of select");
+        
+        curprovince = $(this).find("option:selected").attr("value");
+        if(curprovince == "")
+        {   
+            curprovince = "58.186561, -101.439330";
+            enquire.register("screen and (max-width: 63.9375em)", {
+                match : function() {
+                    console.log("Medium or down screen");
+                    findAddress(curprovince, 2);
+                }
+            });
+
+            enquire.register("screen and (min-width: 64em)", {
+                match : function() {
+                    console.log("Large screen");
+                    findAddress(curprovince, 4);
+                }
+            });
+        }
+        // All province that needs Zoom level 5
+        else if(curprovince == "Ontario" || curprovince == "Alberta" || curprovince == "Newfoundland and Labrador" || curprovince == "British Columbia")
+        {
+            enquire.register("screen and (max-width: 63.9375em)", {
+                match : function() {
+                    console.log("Medium screen with Value");
+                    findAddress(curprovince, 5);
+                }
+            });
+
+            enquire.register("screen and (min-width: 64em)", {
+                match : function() {
+                    console.log("Large screen with Value");
+                    findAddress(curprovince, 5);
+                }
+            });
+        }
+        // All province that needs Zoom level 6
+        else if(curprovince == "Manitoba" || curprovince == "Saskatchewan")
+        {
+            enquire.register("screen and (max-width: 63.9375em)", {
+                match : function() {
+                    console.log("Medium screen with Value");
+                    findAddress(curprovince, 5);
+                }
+            });
+
+            enquire.register("screen and (min-width: 64em)", {
+                match : function() {
+                    console.log("Large screen with Value");
+                    findAddress(curprovince, 6);
+                }
+            });
+        }
+        // All province that needs Zoom level 8
+        else if(curprovince == "Prince Edward Island")
+        {
+            enquire.register("screen and (max-width: 63.9375em)", {
+                match : function() {
+                    console.log("Medium screen with Value");
+                    findAddress(curprovince, 5);
+                }
+            });
+
+            enquire.register("screen and (min-width: 64em)", {
+                match : function() {
+                    console.log("Large screen with Value");
+                    findAddress(curprovince, 8);
+                }
+            });
+        }
+        // All province that needs Zoom level 7
+        else{
+            enquire.register("screen and (max-width: 63.9375em)", {
+                match : function() {
+                    console.log("Medium screen with Value");
+                    findAddress(curprovince, 5);
+                }
+            });
+
+            enquire.register("screen and (min-width: 64em)", {
+                match : function() {
+                    console.log("Large screen with Value");
+                    findAddress(curprovince, 7);
+                }
+            });
+        }
     });
     
-    setTimeout(function(){
-        $(".marker_item").on("click", function(){
-            window.location.href = $(this).attr('data-href');
-        });
-    }, 600);
+    // setTimeout(function(){
+    //     $(".marker_item").on("click", function(){
+    //         window.location.href = $(this).attr('data-href');
+    //     });
+    // }, 600);
 
+    // Refresh list button - We can remove after we finalize scenario
     $(".redosearch a").on("click", function(){
         var curprovince = $(".filter_container").find(".filter_province select option:selected").attr('value');
         var curtype = $(".filter_container").find(".filter_type select option:selected").attr('value');
         var cursize = $(".filter_container").find(".filter_size select option:selected").attr('value');
         var refresh = true;
-        filterMarkers(curprovince, curtype, cursize, refresh);
-    })
+        filter_markers_main();
+    });
+
+    // Load Filter by type options
+    setTimeout(function(){
+        var filter_type = $(".filter_type");
+        var tmpTypes = [];
+        var uniqueArray = function(arrArg) {
+            return arrArg.filter(function(elem, pos,arr) {
+                return arr.indexOf(elem) == pos;
+            });
+        };
+
+        items.forEach(function(item, index) {
+            tmpTypes.push(item.field_property_type);
+            // filter_type.find("select").append("<option value='"+item.field_property_type+"'>"+item.field_property_type+"</option>");
+        }, this);
+
+        tmpTypes = uniqueArray(tmpTypes);
+        // console.log(tmpTypes);
+        filter_type.find("select").prepend("<option value=''>Type</option>");
+        tmpTypes.forEach(function (item, index) {
+            filter_type.find("select").append("<option value='"+item+"'>"+item+"</option>");
+        });
+        
+        
+    }, 300);
+    
 
     // Medium or smaller iPad or less size
     enquire.register("screen and (max-width: 63.9375em)", {
         match : function() {
+            // Tab swithcing
             $(".map_container > div:nth-child(2)").hide();
             $(".tab_container > div:nth-child(1)").addClass("active");
             $(".tab_container > div").on("click", function(){
-                var tabname = $(this).attr("data-tab");
-                $(".map_container > div").removeClass("active").hide();
-                $(this).addClass("active");
-                $(".map_container").find("#"+tabname).fadeIn(800);
-            });     
+                if($(this).hasClass("active"))
+                {
+                    return false;
+                }
+                else
+                {
+                    var tabname = $(this).attr("data-tab");
+                    $(".tab_container > div").removeClass("active");
+                    $(".map_container > div").removeClass("active").hide();
+                    $(this).addClass("active");
+                    $(".map_container").find("#"+tabname).fadeIn(600);   
+                }
+                console.log($(".marker_item.visible").length);
+            });  
+            
+            // Property item click to property page
+            setTimeout(function(){
+                $(".marker_item").on("click", function(){
+                    window.location.href = $(this).attr('data-href');
+                });
+            }, 600);
         }
     });
 });

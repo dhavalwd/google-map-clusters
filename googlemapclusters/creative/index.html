@@ -7,6 +7,8 @@
     <title>Foundation for Sites</title>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="../bower_components/ion.rangeSlider/css/ion.rangeSlider.css" />
+    <link rel="stylesheet" href="../bower_components/ion.rangeSlider/css/ion.rangeSlider.skinHTML5.css" />
     <link rel="stylesheet" href="../css/app.css">
   </head>
   <body>
@@ -38,38 +40,33 @@
                 </div>
                 <div class="filter_type large-2 medium-6 small-4 columns">
                     <select>
-                        <option value="">Type</option>
+                        <!-- <option value="">Type</option>
                         <option value="freestanding">Retail - Freestanding</option>
                         <option value="enclosed">Retail - Enclosed</option>
                         <option value="plazas">Retail - Plazas</option>
-                        <option value="office">Office</option>
+                        <option value="office">Office</option> -->
                     </select>
                 </div>
                 <div class="filter_size large-2 medium-6 small-4 columns">
-                    <select>
-                        <option value="">Size</option>
-                        <option value="large">Large</option>
-                        <option value="medium">Medium</option>
-                        <option value="small">Small</option>
-                    </select>
+                  <input type="text" id="size_filter" name="size_filter" value="" />
                 </div>
             </div>
           </div>
           <div class="tab_container">
-            <div class="properties_tab" data-tab="properties_container">
-              <i class="fa fa-list-ul" aria-hidden="true"></i>
-            </div>
             <div class="map_tab" data-tab="map">
               <i class="fa fa-map-marker" aria-hidden="true"></i>
             </div>
+            <div class="properties_tab" data-tab="properties_container">
+              <i class="fa fa-list-ul" aria-hidden="true"></i>
+            </div>
           </div>
-          <div class="map_container section--full-height row">
-            <div id="map" class="small-12 medium-8 large-12 columns"></div>
-            <div id="properties_container" class="properties_container small-12 medium-4 large-12 columns">
+          <div class="map_container row">
+            <div id="map" class="small-12 medium-8 large-12 columns section--full-height"></div>
+            <div id="properties_container" class="properties_container small-12 medium-4 large-12 columns section--full-height">
               <div class="properties_data">
                 <div class="head_container">
                   <div class="heading"></div>
-                  <div class="redosearch visible text-right"><a href="javascript: void(0)" class="button">Refresh list</a></div>
+                  <!-- <div class="redosearch visible text-right"><a href="javascript: void(0)" class="button">Refresh list</a></div> -->
                 </div>
                 <div class="allmarkers">
                     <div id="markerlist">
@@ -91,6 +88,7 @@
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/what-input/dist/what-input.js"></script>
     <script src="../bower_components/foundation-sites/dist/js/foundation.js"></script>
+    <script src="../bower_components/ion.rangeSlider/js/ion.rangeSlider.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuO2ABqI1946pORvrBmpMHEXamSiRQ7M"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/enquire.js/2.1.6/enquire.min.js"></script>
     <!-- <script src="../etc/search.json"></script> -->
