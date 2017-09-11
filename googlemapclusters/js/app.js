@@ -780,6 +780,7 @@ $(document).ready(function () {
         max: 200000,
         from: 0,
         to: 200000,
+        step: 1000,
         onStart: function(data) {
             save_range_slider(data);
         },
@@ -837,7 +838,7 @@ $(document).ready(function () {
             enquire.register("screen and (max-width: 63.9375em)", {
                 match : function() {
                     console.log("Medium screen with Value");
-                    findAddress(curprovince, 5);
+                    findAddress(curprovince, 4);
                 }
             });
 
@@ -854,7 +855,7 @@ $(document).ready(function () {
             enquire.register("screen and (max-width: 63.9375em)", {
                 match : function() {
                     console.log("Medium screen with Value");
-                    findAddress(curprovince, 5);
+                    findAddress(curprovince, 4);
                 }
             });
 
@@ -871,7 +872,7 @@ $(document).ready(function () {
             enquire.register("screen and (max-width: 63.9375em)", {
                 match : function() {
                     console.log("Medium screen with Value");
-                    findAddress(curprovince, 5);
+                    findAddress(curprovince, 8);
                 }
             });
 
@@ -879,6 +880,23 @@ $(document).ready(function () {
                 match : function() {
                     console.log("Large screen with Value");
                     findAddress(curprovince, 8);
+                }
+            });
+        }
+        // All province that needs Zoom level 7 and 6
+        else if(curprovince == "Nova Scotia" || curprovince == "New Brunswick")
+        {
+            enquire.register("screen and (max-width: 63.9375em)", {
+                match : function() {
+                    console.log("Medium screen with Value");
+                    findAddress(curprovince, 6);
+                }
+            });
+
+            enquire.register("screen and (min-width: 64em)", {
+                match : function() {
+                    console.log("Large screen with Value");
+                    findAddress(curprovince, 7);
                 }
             });
         }

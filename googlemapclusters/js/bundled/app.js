@@ -82,7 +82,9 @@ promise.done(function (datatest) {
     // google.maps.event.addDomListener(window, 'load', function () {
     //     initMap();
     // });
-    initMap();
+    setTimeout(function () {
+        initMap();
+    }, 200);
 });
 
 var panel = $("#markerlist");
@@ -760,7 +762,7 @@ $(document).ready(function () {
                 enquire.register("screen and (max-width: 63.9375em)", {
                     match: function match() {
                         console.log("Medium screen with Value");
-                        findAddress(curprovince, 5);
+                        findAddress(curprovince, 4);
                     }
                 });
 
@@ -776,7 +778,7 @@ $(document).ready(function () {
                     enquire.register("screen and (max-width: 63.9375em)", {
                         match: function match() {
                             console.log("Medium screen with Value");
-                            findAddress(curprovince, 5);
+                            findAddress(curprovince, 4);
                         }
                     });
 
@@ -792,7 +794,7 @@ $(document).ready(function () {
                         enquire.register("screen and (max-width: 63.9375em)", {
                             match: function match() {
                                 console.log("Medium screen with Value");
-                                findAddress(curprovince, 5);
+                                findAddress(curprovince, 8);
                             }
                         });
 
@@ -803,12 +805,12 @@ $(document).ready(function () {
                             }
                         });
                     }
-                    // All province that needs Zoom level 7
-                    else {
+                    // All province that needs Zoom level 7 and 6
+                    else if (curprovince == "Nova Scotia" || curprovince == "New Brunswick") {
                             enquire.register("screen and (max-width: 63.9375em)", {
                                 match: function match() {
                                     console.log("Medium screen with Value");
-                                    findAddress(curprovince, 5);
+                                    findAddress(curprovince, 6);
                                 }
                             });
 
@@ -819,6 +821,22 @@ $(document).ready(function () {
                                 }
                             });
                         }
+                        // All province that needs Zoom level 7
+                        else {
+                                enquire.register("screen and (max-width: 63.9375em)", {
+                                    match: function match() {
+                                        console.log("Medium screen with Value");
+                                        findAddress(curprovince, 5);
+                                    }
+                                });
+
+                                enquire.register("screen and (min-width: 64em)", {
+                                    match: function match() {
+                                        console.log("Large screen with Value");
+                                        findAddress(curprovince, 7);
+                                    }
+                                });
+                            }
     });
 
     // setTimeout(function(){

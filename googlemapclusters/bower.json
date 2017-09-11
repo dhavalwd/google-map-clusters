@@ -10,7 +10,8 @@
   "homepage": "http://foundation.zurb.com",
   "dependencies": {
     "foundation-sites": "~6.4.0",
-    "motion-ui": "~1.2.3"
+    "motion-ui": "~1.2.3",
+    "ion.rangeSlider": "ionrangeslider#^2.2.0"
   },
   "ignore": [
     "**/.*",
