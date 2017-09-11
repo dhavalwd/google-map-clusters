@@ -9,8 +9,8 @@ function set_full_height(section) {
     var offsetbtm = parseInt(jQuery(".filter").css("padding-bottom"));
     var totaloffset = offsettop + offsetbtm;
 
-    var filter_height = jQuery(".filter").height();
-    var full_height = window_height - filter_height - totaloffset; // remove header height
+    var filter_height = jQuery(".filter").outerHeight();
+    var full_height = window_height - filter_height + 38; // remove header height
 
     var minimum_height = 400;
 
@@ -79,7 +79,9 @@ promise.done(function(datatest) {
     // google.maps.event.addDomListener(window, 'load', function () {
     //     initMap();
     // });
-    initMap();
+    setTimeout(function() {
+        initMap();
+    }, 200); 
 });
 
 var panel = $("#markerlist");

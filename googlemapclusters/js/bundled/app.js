@@ -11,10 +11,10 @@ function set_full_height(section) {
     var offsetbtm = parseInt(jQuery(".filter").css("padding-bottom"));
     var totaloffset = offsettop + offsetbtm;
 
-    var filter_height = jQuery(".filter").height();
-    var full_height = window_height - filter_height - totaloffset; // remove header height
+    var filter_height = jQuery(".filter").outerHeight();
+    var full_height = window_height - filter_height + 38; // remove header height
 
-    var minimum_height = 440;
+    var minimum_height = 400;
 
     // ad touch shim for iOS
     if (jQuery('html').hasClass('touch')) {

@@ -470,7 +470,22 @@ Custom Variables ends here.
 
     .filter {
         padding: 40px;
+
+        .filter_container {
+    
+            & > div {
+                
+                select {
+                margin-bottom: 0;
+                }
+    
+                input {
+                    margin-bottom: 0;
+                }
+            }
+        }
     }
+    
 
     .tab_container {
         display: none;
