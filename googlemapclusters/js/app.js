@@ -12,7 +12,7 @@ function set_full_height(section) {
     var filter_height = jQuery(".filter").height();
     var full_height = window_height - filter_height - totaloffset; // remove header height
 
-    var minimum_height = 440;
+    var minimum_height = 400;
 
     // ad touch shim for iOS
     if (jQuery('html').hasClass('touch')) {
@@ -79,19 +79,7 @@ promise.done(function(datatest) {
     // google.maps.event.addDomListener(window, 'load', function () {
     //     initMap();
     // });
-    enquire.register("screen and (max-width: 63.9375em)", {
-        match : function() {
-            google.maps.event.addDomListener(window, 'load', function () {
-                initMap();
-            });
-        }
-    });
-    enquire.register("screen and (min-width: 64em)", {
-        match : function() {
-            initMap();
-        }
-    });
-    // initMap();
+    initMap();
 });
 
 var panel = $("#markerlist");
@@ -784,6 +772,7 @@ $(document).ready(function () {
     // Range slider for Size
     $("#size_filter").ionRangeSlider({
         type: "double",
+        extra_classes: "size_filter_container",
         grid: false,
         min: 0,
         max: 200000,
@@ -948,6 +937,13 @@ $(document).ready(function () {
         
         
     }, 300);
+
+    $(".filter_size .size_filter_container").hide();
+    $(".filter_size label").on("click", function() {
+        $(this).parent().find(".size_filter_container").toggle("fast", function() {
+            $("#size_filter").ionRangeSlider("update");
+        });
+    });
     
 
     // Medium or smaller iPad or less size

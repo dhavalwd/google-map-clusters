@@ -82,19 +82,7 @@ promise.done(function (datatest) {
     // google.maps.event.addDomListener(window, 'load', function () {
     //     initMap();
     // });
-    enquire.register("screen and (max-width: 63.9375em)", {
-        match: function match() {
-            google.maps.event.addDomListener(window, 'load', function () {
-                initMap();
-            });
-        }
-    });
-    enquire.register("screen and (min-width: 64em)", {
-        match: function match() {
-            initMap();
-        }
-    });
-    // initMap();
+    initMap();
 });
 
 var panel = $("#markerlist");
@@ -712,6 +700,7 @@ $(document).ready(function () {
     // Range slider for Size
     $("#size_filter").ionRangeSlider({
         type: "double",
+        extra_classes: "size_filter_container",
         grid: false,
         min: 0,
         max: 200000,
@@ -869,6 +858,13 @@ $(document).ready(function () {
             filter_type.find("select").append("<option value='" + item + "'>" + item + "</option>");
         });
     }, 300);
+
+    $(".filter_size .size_filter_container").hide();
+    $(".filter_size label").on("click", function () {
+        $(this).parent().find(".size_filter_container").toggle("fast", function () {
+            $("#size_filter").ionRangeSlider("update");
+        });
+    });
 
     // Medium or smaller iPad or less size
     enquire.register("screen and (max-width: 63.9375em)", {

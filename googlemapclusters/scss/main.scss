@@ -403,7 +403,48 @@ Custom Variables ends here.
                 border: 1px solid $blue;
                 color: $white;
             }
-            
+        }
+
+        .filter_size {
+
+            label {
+                border: 1px solid $blue;
+                color: $white;
+                cursor: pointer;
+                padding: 10px 20px;
+                background-image: url('../images/arrow-down.png');
+                background-repeat: no-repeat;
+                background-size: 22px 12px;
+                background-position: right 0.5rem center;
+                font-size: 1rem;
+                font-weight: normal;
+                line-height: 1rem;
+            }
+
+            span.size_filter_container {
+                padding-top: 5px;
+                
+                .irs-min, .irs-max {
+                    top: 5px;
+                    color: $white;
+                }
+
+                .irs-line {
+                    top: 38px;
+                }
+
+                .irs-bar {
+                    top: 43px;
+                }
+
+                .irs-from, .irs-to, .irs-single {
+                    top: 5px;
+                }
+                
+                .irs-slider {
+                    top: 35px;
+                }
+            }
         }
     }
 }
